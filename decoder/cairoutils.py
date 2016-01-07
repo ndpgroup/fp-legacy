@@ -1,7 +1,9 @@
 import json
 from StringIO import StringIO
-from os import close, write, unlink
+from os import close, stat, write, unlink
+from os.path import join as pathjoin, dirname, realpath
 from subprocess import Popen, PIPE
+import sys
 from tempfile import mkstemp
 
 from cairo import PDFSurface, Context
