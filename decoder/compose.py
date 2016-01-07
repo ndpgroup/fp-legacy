@@ -5,7 +5,7 @@ from copy import copy
 from urllib import urlopen, urlencode, quote_plus
 from os.path import join as pathjoin, dirname, realpath
 from urlparse import urljoin, urlparse, parse_qs
-from os import close, write, unlink
+from os import close, stat, write, unlink
 from optparse import OptionParser
 from StringIO import StringIO
 from tempfile import mkstemp
@@ -82,6 +82,17 @@ def get_preview_map_size(orientation, paper_size):
 
     return int(width), int(height)
 
+def resource(filename):
+    self_dir = dirname(__file__) or '.'
+    for path_dir in [self_dir] + sys.path:
+        candidate_file = pathjoin(path_dir, filename)
+        try:
+            sb = stat(candidate_file)
+            return realpath(candidate_file)
+        except:
+            pass
+    return realpath(filename)
+
 def add_page_text(ctx, text, x, y, width, height):
     """
     """
@@ -90,7 +101,7 @@ def add_page_text(ctx, text, x, y, width, height):
     ctx.move_to(0, 12)
 
     try:
-        font_file = realpath('fonts/LiberationSans-Regular.ttf')
+        font_file = resource('fonts/LiberationSans-Regular.ttf')
 
         if font_file not in cached_fonts:
             cached_fonts[font_file] = create_cairo_font_face_for_file(font_file)
@@ -357,12 +368,12 @@ def add_print_page(ctx, mmap, href, well_bounds_pt, points_FG, hm2pt_ratio, layo
     #
     # Draw top-left icon
     #
-    icon = pathjoin(dirname(__file__), 'images/logo.png')
+    icon = resource('images/logo.png')
     img = ImageSurface.create_from_png(icon)
     place_image(ctx, img, 0, -36, 129.1, 36)
 
     try:
-        font_file = realpath('fonts/LiberationSans-Regular.ttf')
+        font_file = resource('fonts/LiberationSans-Regular.ttf')
 
         if font_file not in cached_fonts:
             cached_fonts[font_file] = create_cairo_font_face_for_file(font_file)

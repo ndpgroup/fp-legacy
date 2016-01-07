@@ -75,6 +75,17 @@ class FakeContext:
         self.commands += self.page
         self.page = []
 
+    def _resource(filename):
+        self_dir = dirname(__file__) or '.'
+        for path_dir in [self_dir] + sys.path:
+            candidate_file = pathjoin(path_dir, filename)
+            try:
+                sb = stat(candidate_file)
+                return realpath(candidate_file)
+            except:
+                pass
+        return realpath(filename)
+
     def finish(self):
         """
         """
@@ -84,7 +95,8 @@ class FakeContext:
             'filename': self.filename
           }
         
-        page = Popen(['php', 'lossy/page.php'], stdin=PIPE)
+        script = self._resource('lossy/page.php')
+        page = Popen(['php', script], stdin=PIPE)
         json.dump(info, page.stdin)
         page.stdin.close()
         page.wait()
