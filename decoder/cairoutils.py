@@ -75,7 +75,7 @@ class FakeContext:
         self.commands += self.page
         self.page = []
 
-    def _resource(filename):
+    def _resource(self, filename):
         self_dir = dirname(__file__) or '.'
         for path_dir in [self_dir] + sys.path:
             candidate_file = pathjoin(path_dir, filename)
